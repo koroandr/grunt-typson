@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "Dimension": {
+      "id": "Dimension",
+      "type": "object",
+      "properties": {
+        "width": {
+          "description": "Width in cm",
+          "type": "number"
+        },
+        "height": {
+          "description": "Height in cm",
+          "type": "number"
+        },
+        "length": {
+          "description": "Length in cm",
+          "type": "number"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "length"
+      ],
+      "additionalProperties": false
+    },
+    "Product": {
+      "id": "Product",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Uniquely defines the product",
+          "pattern": "[A-Z][a-z][0-9]_",
+          "type": "string"
+        },
+        "dimension": {
+          "description": "How big it is",
+          "$ref": "#/definitions/Dimension"
+        },
+        "category": {
+          "description": "Classification",
+          "$ref": "#/definitions/Category"
+        },
+        "origin": {
+          "description": "Where is it from?\n\n| Value     | Description\n|-\n| `Local`   | From here \n| `Imported`| From elsewhere ",
+          "enum": [
+            "Local",
+            "Imported"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "category",
+        "origin"
+      ],
+      "additionalProperties": false
+    },
+    "WeightedProduct": {
+      "id": "WeightedProduct",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Uniquely defines the product",
+          "pattern": "[A-Z][a-z][0-9]_",
+          "type": "string"
+        },
+        "dimension": {
+          "description": "How big it is",
+          "$ref": "#/definitions/Dimension"
+        },
+        "category": {
+          "description": "Classification",
+          "$ref": "#/definitions/Category"
+        },
+        "origin": {
+          "description": "Where is it from?\n\n| Value     | Description\n|-\n| `Local`   | From here \n| `Imported`| From elsewhere ",
+          "enum": [
+            "Local",
+            "Imported"
+          ]
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "category",
+        "origin",
+        "weight"
+      ],
+      "additionalProperties": false
+    },
+    "Category": {
+      "id": "Category",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Uniquely identifies the category",
+          "type": "string"
+        },
+        "level": {
+          "description": "Classification level from 1 to 5 (highest)",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "level"
+      ],
+      "additionalProperties": false
+    },
+    "CategoryIndex": {
+      "id": "CategoryIndex",
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Category"
+          }
+        },
+        "products": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Product"
+          }
+        }
+      },
+      "required": [
+        "categories",
+        "products"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
