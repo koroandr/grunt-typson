@@ -134,6 +134,19 @@
         "products"
       ],
       "additionalProperties": false
+    },
+    "Test": {
+      "id": "Test",
+      "type": "object",
+      "properties": {
+        "str": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "str"
+      ],
+      "additionalProperties": false
     }
   }
 }

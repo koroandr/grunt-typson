@@ -9,6 +9,8 @@
 'use strict';
 
 var typson = require('typson');
+var q = require('q');
+var _ = require('underscore');
 
 module.exports = function(grunt) {
 
@@ -17,30 +19,37 @@ module.exports = function(grunt) {
 
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
+        q.all(
+          f.src.filter(function(filepath) {
 
-      f.src.filter(function(filepath) {
+            // make sure each file is really there
+            if (!grunt.file.exists(filepath)) {
+              grunt.log.warn('Source file "' + filepath + '" not found.');
+              return false;
+            } else {
+              return true;
+            }
+          }).map(function(filepath) {
+            grunt.log.writeln('path: ' + filepath);
+            // pass file to typson library.
+            return typson.schema(filepath);;
+          })
+        ).then(function (schemas) {
+              var uber_schema = schemas[0];
 
-        // make sure each file is really there
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        
-        // pass file to typson library.
-        return typson.schema(filepath).then(function(schema) {
-          // then write the response to fs
+              _.each(schemas.slice(1), function (schema) {
+                  uber_schema.definitions = _.extend(uber_schema.definitions, schema.definitions);
+              });
 
-          // TODO: allow settings for formating JSONSchemas
-          grunt.file.write(f.dest, JSON.stringify(schema, null, 2));
-          
-          // Print a success message.
-          grunt.log.writeln('File "' + f.dest + '" created.');
-          done();
+              // then write the response to fs
+
+              // TODO: allow settings for formating JSONSchemas
+              grunt.file.write(f.dest, JSON.stringify(uber_schema, null, 2));
+
+              // Print a success message.
+              grunt.log.writeln('File "' + f.dest + '" created.');
+              done();
         });
-      });
     });
   });
 };
