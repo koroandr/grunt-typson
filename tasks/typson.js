@@ -30,7 +30,6 @@ module.exports = function(grunt) {
               return true;
             }
           }).map(function(filepath) {
-            grunt.log.writeln('path: ' + filepath);
             // pass file to typson library.
             return typson.schema(filepath);;
           })
